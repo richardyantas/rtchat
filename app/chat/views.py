@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import ChatMessageCreateForm
 from django.views.decorators.csrf import csrf_protect
+
 # Create your views here.
 
 
@@ -20,16 +21,15 @@ def chat_view(request):
     if request.htmx:
         form = ChatMessageCreateForm(request.POST)
         if form.is_valid:
-            message = form.save(commit = False)
+            message = form.save(commit=False)
             message.author = request.user
             message.group = chat_group
             message.save()
-            context = {
-                'message': message,
-                'user': request.user
-            }
+            context = {"message": message, "user": request.user}
             # print("entroooooooooo")
             # return redirect('home')
-            return render(request, 'chat/partials/chat_message_p.html', context)
-        
-    return render(request, 'chat/chat.html', {'chat_messages': chat_messages, 'form': form})
+            return render(request, "chat/partials/chat_message_p.html", context)
+
+    return render(
+        request, "chat/chat.html", {"chat_messages": chat_messages, "form": form}
+    )

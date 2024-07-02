@@ -1,11 +1,11 @@
 from .base import *
 import os
 
-SECRET_KEY=os.environ.get("SECRET_KEY")
-DEBUG=False
-ALLOWED_HOSTS=['*']
+SECRET_KEY = os.environ.get("SECRET_KEY")
+DEBUG = False
+ALLOWED_HOSTS = ["*"]
 
-DATABASES={
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("DB_NAME"),
@@ -16,6 +16,5 @@ DATABASES={
     }
 }
 
-
-STATIC_ROOT=Path.joinpath(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = Path.joinpath(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

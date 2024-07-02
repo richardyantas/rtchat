@@ -13,8 +13,9 @@ services:
   
   web:
     build: ./app    
-    command: python manage.py runserver 0.0.0.0:8000
-    # command: python manage.py runserver --settings=app.settings.development
+    # command: python manage.py runserver 0.0.0.0:8000 
+    command: python manage.py runserver 0.0.0.0:8000 --settings=app.settingsdir.development 
+    # command: python manage.py runserver
     volumes:
       - ./app/:/usr/src/app/
     ports:
@@ -31,10 +32,10 @@ services:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    #environment:
-      # - POSTGRES_USER=hello_django
-      # - POSTGRES_PASSWORD=hello_django
-      # - POSTGRES_DB=hello_django_dev
+    environment:
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
+      - POSTGRES_DB=hello_django_dev
     networks:
       - live   
 

@@ -9,3 +9,7 @@ django-htmx
 channels[daphne]
 channels-redis
 psycopg2-binary
+pytest
+pre-commit
+black
+flake8

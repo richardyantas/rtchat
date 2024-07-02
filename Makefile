@@ -6,6 +6,6 @@ install:
 	pip install app/requirements.txt
 lint:
 	# pep8
-	python manage.py pylint 
+	python app/manage.py pylint 
 test:
-	python manage.py test
+	python app/manage.py test --settings=app.settings.development
