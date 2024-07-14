@@ -4,10 +4,12 @@ from django.template.loader import render_to_string
 from asgiref.sync import async_to_sync
 from .models import *
 import json
+from app.logger import logger
 
 
 class ChatroomConsumer(WebsocketConsumer):
     def connect(self):
+        logger.info("connected")
         self.user = self.scope["user"]
         self.chatroom_name = self.scope["url_route"]["kwargs"]["chatroom_name"]
         self.chatroom = get_object_or_404(ChatGroup, group_name=self.chatroom_name)
@@ -23,7 +25,7 @@ class ChatroomConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-
+        logger.info("disconnected")
         async_to_sync(self.channel_layer.group_discard)(
             self.chatroom_name, self.channel_name
         )
@@ -33,6 +35,7 @@ class ChatroomConsumer(WebsocketConsumer):
             self.update_online_count()
 
     def receive(self, text_data):
+        logger.info("received data")
         text_data_json = json.loads(text_data)
         body = text_data_json["body"]
 

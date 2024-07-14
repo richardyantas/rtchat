@@ -13,3 +13,7 @@ pytest
 pre-commit
 black
 flake8
+gunicorn
+daphne
+
+whitenoise

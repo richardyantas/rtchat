@@ -1,11 +1,10 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import ChatMessageCreateForm
 from django.views.decorators.csrf import csrf_protect
+from app.logger import logger
 
 # Create your views here.
 
@@ -13,6 +12,7 @@ from django.views.decorators.csrf import csrf_protect
 @csrf_protect
 @login_required
 def chat_view(request):
+    logger.info("chat_view called ... ")
     chat_group = get_object_or_404(ChatGroup, group_name="public-chat")
     chat_messages = chat_group.chat_messages.all()[:30]
     form = ChatMessageCreateForm()

@@ -12,7 +12,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.test.client import Client
 import unittest
-from django.urls import reverse
 
 
 class LoginTestCase(unittest.TestCase):
@@ -22,7 +21,7 @@ class LoginTestCase(unittest.TestCase):
             self.user = User.objects.create_user(
                 "john3", "john3@email.com", "bareco3t@wer"
             )
-        except:
+        except Exception:
             print("it already exist")
 
     def testProfileView(self):

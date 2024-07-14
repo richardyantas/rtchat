@@ -14,7 +14,7 @@ def profile_view(request, username=None):
     else:
         try:
             profile = request.user.profile
-        except:
+        except Exception:
             return redirect("account_login")
     return render(request, "users/profile.html", {"profile": profile})
 
