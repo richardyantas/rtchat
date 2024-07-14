@@ -1,15 +1,26 @@
-version: '3.8'
+# version: '3.8'
 
 services:
+
+  redis:
+    restart: unless-stopped
+    image: redis:7.0.5-alpine 
+    expose:
+        - 6379
+    networks:
+      - live 
+
   web:
     build:
       context: ./app
       dockerfile: Dockerfile.prod
     # command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
-    command: gunicorn app.asgi:application --bind --settings=app.settings.production
+    command: daphne app.asgi:application -b 0.0.0.0 -p 8000 
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
+      # - ./app/static:/home/app/web/staticfiles
+      # - ./app/media:/home/app/web/mediafiles
     expose:
       - 8000
     env_file:
@@ -17,28 +28,44 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - live
+    restart: always
+    
+
   db:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.prod.db
+    networks:
+      - live
+
   nginx:
-    build: ./nginx
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
+      # - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      # - ./app/static:/home/app/web/staticfiles
+      # - ./app/media:/home/app/web/mediafiles
     ports:
       - 1337:80
     depends_on:
       - web
-  redis:
-        restart: unless-stopped
-        image: redis:7.0.5-alpine 
-        expose:
-            - 6379
+    networks:
+      - live
+  
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  # static_volume: ./app/static/
+  # media_volume: ./app/media/
+
+networks:
+  live:
