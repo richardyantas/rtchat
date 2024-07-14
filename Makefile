@@ -1,11 +1,34 @@
+.PHONY: conda-install
+conda-install:
+	pip-compile requirements/prod.in && pip-compile requirements/dev.in
+	pip-sync requirements/prod.txt requirements/dev.txt
 
+.PHONY: conda-create
+conda-create:
+	conda env update -f environment.yml; 
+# conda activate django-composer
+
+.PHONY: conda-remove
+conda-remove:
+	conda env remove --name django-composer
+
+.PHONY: install
 install:
-	# python3 -m venv venv
-	source venv/bin/activate
-	pip install --upgrade pip
-	pip install app/requirements.txt
+	pip install -r requirements/dev.txt
+
+.PHONY: install-pre-commit
+install-pre-commit:
+	pip uninstall pre-commit; 
+	pip install pre-commit;	
+
+.PHONY: lint
 lint:
-	# pep8
-	python app/manage.py pylint 
-test:
-	python app/manage.py test --settings=app.settings.development
+	pre-commit run --all-files
+
+# .PHONY: test
+# test:
+# 	python app/manage.py test
+
+.PHONY: update
+update:
+	install migrate install-pre-commit

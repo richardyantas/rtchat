@@ -1,0 +1,8 @@
+name: django-composer
+channels:
+  - default
+dependencies:
+  - python=3.11.4
+  - pip
+  - pip:
+      - pip-tools
