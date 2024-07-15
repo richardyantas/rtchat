@@ -16,11 +16,6 @@ jobs:
           POSTGRES_PASSWORD: hello_django_dev
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install make
-        run: apt-get update && apt-get install -y make
-      
       - name: Install Git
         run: apt-get update && apt-get install -y git
       
@@ -29,6 +24,18 @@ jobs:
 
       - name: Verify Git repository
         run: git status
+
+      - uses: actions/checkout@v2
+    
+      
+      - name: Debug repository contents
+        run: |
+          ls -la
+          pwd
+          git status
+
+      - name: Install make
+        run: apt-get update && apt-get install -y make            
 
       - name: Install Dependencies
         run: make install && make install-pre-commit
