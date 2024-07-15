@@ -18,7 +18,7 @@ install:
 
 .PHONY: install-pre-commit
 install-pre-commit:
-	pip uninstall pre-commit; 
+	pip uninstall -y pre-commit; 
 	pip install pre-commit;	
 
 .PHONY: lint
