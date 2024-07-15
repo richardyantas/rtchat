@@ -24,9 +24,6 @@ jobs:
 
       - uses: actions/checkout@v2
       
-      - name: Verify Git repository
-        run: git status      
-      
       - name: Debug repository contents
         run: |
           ls -la
