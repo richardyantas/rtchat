@@ -25,9 +25,9 @@ install-pre-commit:
 lint:
 	pre-commit run --all-files
 
-# .PHONY: test
-# test:
-# 	python app/manage.py test
+.PHONY: test
+test:
+	python app/manage.py test
 
 .PHONY: update
 update:

@@ -26,7 +26,7 @@ COPY . /usr/src/app/
 # install python dependencies
 # COPY ./requirements.txt .
 COPY ./requirements/prod.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r prod.txt
 
 
 #########
@@ -57,7 +57,7 @@ RUN adduser --disabled-password --gecos "" app && \
 # install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends netcat
 COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements.txt .
+COPY --from=builder /usr/src/app/prod.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
