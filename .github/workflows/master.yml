@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   quality-assurance:    
-    name: Quality Assurance    
+    name: Quality Assurance Chat
     uses: ./.github/workflows/pr.yml
 
 #   deploy:
