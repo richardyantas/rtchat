@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   quality-assurance:    
-    name: Quality Assurance    
+    name: Quality Assurance Real Chat 
     uses: ./.github/workflows/pr.yml
 
 #   deploy:
