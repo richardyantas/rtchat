@@ -23,6 +23,12 @@ jobs:
       
       - name: Install Git
         run: apt-get update && apt-get install -y git
+      
+      - name: Verify Git installation
+        run: git --version
+
+      - name: Verify Git repository
+        run: git status
 
       - name: Install Dependencies
         run: make install && make install-pre-commit
