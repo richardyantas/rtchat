@@ -20,6 +20,9 @@ jobs:
 
       - name: Install make
         run: apt-get update && apt-get install -y make
+      
+      - name: Install Git
+        run: apt-get update && apt-get install -y git
 
       - name: Install Dependencies
         run: make install && make install-pre-commit
