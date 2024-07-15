@@ -9,7 +9,7 @@ repos:
     rev: 4.0.1
     hooks:
       - id: flake8
-        args: ['--ignore=E203, E226, E501, E503, F403, F401, F405, C101, Q000, E2, E129, E402, B950']
+        args: ['--ignore=E203, E226, E501, E503, F403, F401, F405, C101, Q000, E2, E129, E402, B950, E302, E303']
         additional_dependencies:
           - flake8-bugbear
           - flake8-builtins

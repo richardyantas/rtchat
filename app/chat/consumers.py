@@ -5,19 +5,28 @@ from asgiref.sync import async_to_sync
 from .models import *
 import json
 from app.logger import logger
+from django.contrib.auth import get_user_model
 
+
+User = get_user_model()
 
 class ChatroomConsumer(WebsocketConsumer):
+
     def connect(self):
         logger.info("connected")
         self.user = self.scope["user"]
+        if not self.user.is_authenticated:
+            # Si el usuario no está autenticado, rechaza la conexión
+            self.close()
+            return
+        # Asegúrate de que self.user sea una instancia de User
+        if not isinstance(self.user, User):
+            self.user = User.objects.get(id=self.user.id)
         self.chatroom_name = self.scope["url_route"]["kwargs"]["chatroom_name"]
         self.chatroom = get_object_or_404(ChatGroup, group_name=self.chatroom_name)
-
         async_to_sync(self.channel_layer.group_add)(
             self.chatroom_name, self.channel_name
         )
-
         if self.user not in self.chatroom.users_online.all():
             self.chatroom.users_online.add(self.user)
             self.update_online_count()
@@ -26,13 +35,14 @@ class ChatroomConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         logger.info("disconnected")
-        async_to_sync(self.channel_layer.group_discard)(
-            self.chatroom_name, self.channel_name
-        )
+        if hasattr(self, 'chatroom_name') and hasattr(self, 'user') and hasattr(self, 'chatroom'):
+            async_to_sync(self.channel_layer.group_discard)(
+                self.chatroom_name, self.channel_name
+            )
 
-        if self.user in self.chatroom.users_online.all():
-            self.chatroom.users_online.remove(self.user)
-            self.update_online_count()
+            if self.user in self.chatroom.users_online.all():
+                self.chatroom.users_online.remove(self.user)
+                self.update_online_count()
 
     def receive(self, text_data):
         logger.info("received data")

@@ -24,7 +24,8 @@ COPY . /usr/src/app/
 # RUN flake8 .
 
 # install python dependencies
-COPY ./requirements.txt .
+# COPY ./requirements.txt .
+COPY ./requirements/prod.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 
@@ -72,6 +73,10 @@ RUN chmod +x  $APP_HOME/entrypoint.prod.sh
 
 # copy project
 COPY . $APP_HOME
+
+# last added by rick
+RUN cp -r $APP_HOME/static/* $APP_HOME/staticfiles/
+RUN cp -r $APP_HOME/media/* $APP_HOME/mediafiles/
 
 # chown all the files to the app user
 RUN chown -R app:app $APP_HOME

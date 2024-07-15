@@ -1,7 +1,7 @@
 .PHONY: conda-install
 conda-install:
-	pip-compile requirements/prod.in && pip-compile requirements/dev.in
-	pip-sync requirements/prod.txt requirements/dev.txt
+	pip-compile app/requirements/prod.in && pip-compile app/requirements/dev.in
+	pip-sync app/requirements/prod.txt app/requirements/dev.txt
 
 .PHONY: conda-create
 conda-create:
@@ -14,7 +14,7 @@ conda-remove:
 
 .PHONY: install
 install:
-	pip install -r requirements/dev.txt
+	pip install -r app/requirements/dev.txt
 
 .PHONY: install-pre-commit
 install-pre-commit:

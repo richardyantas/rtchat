@@ -4,7 +4,7 @@ __pycache
 .env.dev
 .env.prod
 .env.prod.db
-setup.sh
+comands.sh
 /venv
 **/__pycache__
 
