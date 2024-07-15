@@ -22,11 +22,10 @@ jobs:
       - name: Verify Git installation
         run: git --version
 
-      - name: Verify Git repository
-        run: git status
-
       - uses: actions/checkout@v2
-    
+      
+      - name: Verify Git repository
+        run: git status      
       
       - name: Debug repository contents
         run: |
