@@ -14,7 +14,7 @@ conda-remove:
 
 .PHONY: install
 install:
-	pip install -r app/requirements/dev.txt
+	pip install -r app/requirements/prod.txt
 
 .PHONY: install-pre-commit
 install-pre-commit:

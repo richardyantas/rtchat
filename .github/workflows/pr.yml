@@ -16,13 +16,25 @@ jobs:
           POSTGRES_PASSWORD: hello_django_dev
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install make
-        run: apt-get update && apt-get install -y make
-      
       - name: Install Git
         run: apt-get update && apt-get install -y git
+      
+      - name: Verify Git installation
+        run: git --version
+
+      - uses: actions/checkout@v2
+      
+      - name: Give ownership
+        run: git config --global --add safe.directory /__w/rtchat/rtchat
+        
+      - name: Debug repository contents
+        run: |
+          ls -la
+          pwd
+          git status
+
+      - name: Install make
+        run: apt-get update && apt-get install -y make            
 
       - name: Install Dependencies
         run: make install && make install-pre-commit
