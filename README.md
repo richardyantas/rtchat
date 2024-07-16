@@ -41,19 +41,80 @@ Uses the default Django development server.
 1. Build the images and run the containers:
 
     ```sh
-    $ docker-compose up -d --build
+    $ docker compose -f docker-compose.yml up --build --force-recreate
     ```
 
-    Test it out at [http://localhost:8000](http://localhost:8000). The "app" folder is mounted into the container and your code changes apply automatically.
+    Data for testing is created using the dataentry.py file:
+    ```python
+    from django.contrib.auth.models import User
+    from chat.models import * 
+    from users.models import *
+
+    u1 = User.objects.create_user(
+        "robert", 
+        email="robert@email.com", 
+        password="bareco3t@wer"
+    )
+    u2 = User.objects.create_user(
+        "camilo", 
+        email="camilo@email.com",
+        password="bareco3t@wer"
+    )
+
+    pc = ChatGroup(group_name="public-chat")
+    pc.save()
+
+    g1 = GroupMessage(group=pc, 
+                    author=u1, 
+                    body="hello there?")
+    g1.save()
+
+    g2 = GroupMessage(group=pc, 
+                    author=u2, 
+                    body="whatsapp bro ..")
+    g2.save()
+    p1 = Profile.objects.get(pk=2)
+    p1.image = "avatars/ape1.jpg" 
+    p1.displayname = "roboto"
+
+    p2 = Profile.objects.get(pk=3)
+    p2.image = "avatars/ape2.jpg"
+    p2.displayname = "dino"
+
+    p1.save()
+    p2.save()
+    ```
+    This file (dataentry.py) is executed from entrypoint.sh in  Dockerfile:
 
     ```sh
-    $ docker-compose exec web python manage.py createsuperuser --noinput
+    #!/bin/sh
+    if [ "$DATABASE" = "postgres" ]
+    then
+        echo "Waiting for postgres..."
+
+        while ! nc -z $SQL_HOST $SQL_PORT; do
+        sleep 0.1
+        done
+
+        echo "PostgreSQL started"
+    fi
+    python manage.py flush --no-input
+    python manage.py migrate
+    python manage.py createsuperuser --noinput
+    python manage.py shell < dataentry.py
+    exec "$@"
+
     ```
 
-    Run if you want to test more data, entering data in the dataentry.py file
+
+    Test it out at [http://localhost:8000](http://localhost:1337). No mounted folders. To apply changes, the image must be re-built.
+
+
+    The following command help us to stop and remove containers and also remove network and volumes created before.
 
     ```sh
-    $ docker-compose exec  -T web ./manage.py shell <  dataentry.py
+    $ docker compose -f docker-compose.yml down -v
+    ```
 
 ### Production
 
@@ -90,19 +151,78 @@ Uses daphne + nginx.
     ```sh
     $ docker compose -f docker-compose.prod.yml up --build 
     ```
+    Test it out at [http://0.0.0.0:1337](http://0.0.0.0:1337). No mounted folders. To apply changes, the image must be re-built.
 
-    Test it out at [http://localhost:1337](http://localhost:1337). No mounted folders. To apply changes, the image must be re-built.
+    The following command help us to stop and remove containers and also remove network and volumes created before.
+
+    ```sh
+    $ docker compose -f docker-compose.prod.yml down -v
+    ```
 
 
 ### CI/CD
 
 
 1. Quality Assurance
+    
+    Github actions help us to run CI on github environments.
 
+    ```sh
+    name: Quality Assurance
+    on: [pull_request, workflow_call]
+
+    jobs:
+    quality-assurance:
+        name: Quality Assurance
+        runs-on: ubuntu-latest
+        container: python:3.11.4-slim-buster
+
+        services:
+        db:
+            image: postgres:15
+            env:
+            POSTGRES_DB: hello_django
+            POSTGRES_USER: hello_django
+            POSTGRES_PASSWORD: hello_django_dev
+
+        steps:
+        - name: Install Git
+            run: apt-get update && apt-get install -y git
+        
+        - name: Verify Git installation
+            run: git --version
+
+        - uses: actions/checkout@v2
+        
+        - name: Give ownership
+            run: git config --global --add safe.directory /__w/rtchat/rtchat
+            
+        - name: Debug repository contents
+            run: |
+            ls -la
+            pwd
+            git status
+
+        - name: Install make
+            run: apt-get update && apt-get install -y make            
+
+        - name: Install Dependencies
+            run: make install && make install-pre-commit
+
+        - name: Lint
+            run: make lint
+
+        - name: Test
+            run: make test
+    ```
+    
+    Make Lint, help us to apply formatters(Black) and linters(Flake8) to our code.
+    
     ```sh
     $ Make Lint # -> pre-commit run --all-files
     ```
-    This command execute this file
+    This above command execute the file `.pre-commit-config.yaml`
+
     ```sh
     repos:
     - repo: https://github.com/ambv/black
