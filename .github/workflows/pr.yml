@@ -23,6 +23,12 @@ jobs:
         run: git --version
 
       - uses: actions/checkout@v2
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        # env:
+        #   SONAR_TOKEN: ${{secrets.SONAR_TOKEN}} // Sonar Token generated
+        #   SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}} // Example 
       
       - name: Give ownership
         run: git config --global --add safe.directory /__w/rtchat/rtchat
